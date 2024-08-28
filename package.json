@@ -1,0 +1,11 @@
+{
+  "name": "mef--manage-enterprise-files-app",
+  "version": "1.0.0",
+  "description": "projeto app MEF",
+  "main": "index.js",
+  "scripts": {
+    "test": "exe"
+  },
+  "author": "Danilo, Leo",
+  "license": "ISC"
+}
