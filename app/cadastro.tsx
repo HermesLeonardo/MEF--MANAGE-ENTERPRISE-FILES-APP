@@ -1,21 +1,27 @@
-import { NavigationRouteContext } from '@react-navigation/native';
-import { NavigatorContext } from 'expo-router/build/views/Navigator';
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Button} from 'react-native';
-import Link from 'expo-router';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
-
-export default function LoginScreen() {
+export default function SignUpScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.backgroundShape} />
 
       <View style={styles.content}>
-        <Text style={styles.title}>LOGIN</Text>
+        <Text style={styles.title}>CADASTRO</Text>
 
         <View style={styles.inputContainer}>
           <TextInput 
+            placeholder="Nome" 
+            style={styles.input} 
+            placeholderTextColor="#A0A0A0"
+          />
+          <TextInput 
             placeholder="CNPJ" 
+            style={styles.input} 
+            placeholderTextColor="#A0A0A0"
+          />
+          <TextInput 
+            placeholder="E-mail" 
             style={styles.input} 
             placeholderTextColor="#A0A0A0"
           />
@@ -25,28 +31,24 @@ export default function LoginScreen() {
             style={styles.input} 
             placeholderTextColor="#A0A0A0"
           />
-          <TouchableOpacity>
-            <Text style={styles.forgotPassword}>Esqueceu sua senha?</Text>
-          </TouchableOpacity>
+          <TextInput 
+            placeholder="Confirmar Senha" 
+            secureTextEntry 
+            style={styles.input} 
+            placeholderTextColor="#A0A0A0"
+          />
         </View>
 
         <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>ENTRAR</Text>
+          <Text style={styles.buttonText}>CADASTRAR</Text>
         </TouchableOpacity>
 
         <TouchableOpacity>
           <Text style={styles.signUpText}>
-            Ainda não possui uma conta? <Text style={styles.signUpLink}>Cadastre-se</Text>
+            Já possui uma conta? <Text style={styles.signUpLink}>Faça login</Text>
           </Text>
         </TouchableOpacity>
       </View>
-
-
-      <View>
-
-      </View>
-
-    
     </View>
   );
 }
@@ -89,12 +91,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     paddingLeft: 20,
     fontSize: 16,
-  },
-  forgotPassword: {
-    color: '#FFFFFF',
-    textAlign: 'right',
-    marginTop: -10,
-    marginBottom: 20,
   },
   button: {
     backgroundColor: '#1877F2',
