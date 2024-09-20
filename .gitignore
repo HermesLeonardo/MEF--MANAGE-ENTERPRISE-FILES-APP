@@ -18,3 +18,6 @@ web-build/
 
 expo-env.d.ts
 # @end expo-cli
+
+#adicionar o arquivo de conexão no gitignore
+service/connection.tsx

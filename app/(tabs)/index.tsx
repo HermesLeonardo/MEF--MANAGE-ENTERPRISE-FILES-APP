@@ -1,11 +1,21 @@
-import { NavigationRouteContext } from '@react-navigation/native';
-import { NavigatorContext } from 'expo-router/build/views/Navigator';
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Button} from 'react-native';
-import Link from 'expo-router';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Pressable } from 'react-native';
+import { useForm, Controller } from 'react-hook-form';
+import { router } from 'expo-router';
 
+type FormData = {
+  cnpj: string;
+  senha: string;
+};
 
 export default function LoginScreen() {
+  const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
+
+  const onSubmit = (data: FormData) => {
+    console.log(data);
+    router.push('/prototipoDois');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.backgroundShape} />
@@ -14,39 +24,74 @@ export default function LoginScreen() {
         <Text style={styles.title}>LOGIN</Text>
 
         <View style={styles.inputContainer}>
-          <TextInput 
-            placeholder="CNPJ" 
-            style={styles.input} 
-            placeholderTextColor="#A0A0A0"
+          <Controller
+            control={control}
+            rules={{
+              required: 'O campo CNPJ é obrigatório.',
+              pattern: {
+                value: /^\d{14}$/,
+                message: 'CNPJ inválido.',
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                placeholder="CNPJ"
+                style={styles.input}
+                placeholderTextColor="#A0A0A0"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+            name="cnpj"
+            defaultValue=""
           />
-          <TextInput 
-            placeholder="Senha" 
-            secureTextEntry 
-            style={styles.input} 
-            placeholderTextColor="#A0A0A0"
+          {errors.cnpj && <Text style={styles.errorText}>{errors.cnpj.message}</Text>}
+
+          <Controller
+            control={control}
+            rules={{
+              required: 'O campo Senha é obrigatório.',
+              minLength: {
+                value: 6,
+                message: 'A senha deve ter pelo menos 6 caracteres.',
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                placeholder="Senha"
+                secureTextEntry
+                style={styles.input}
+                placeholderTextColor="#A0A0A0"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+            name="senha"
+            defaultValue=""
           />
+          {errors.senha && <Text style={styles.errorText}>{errors.senha.message}</Text>}
+
           <TouchableOpacity>
             <Text style={styles.forgotPassword}>Esqueceu sua senha?</Text>
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>ENTRAR</Text>
+          <Pressable onPress={handleSubmit(onSubmit)}>
+            <Text style={styles.buttonText}>ENTRAR</Text>
+          </Pressable>
         </TouchableOpacity>
 
         <TouchableOpacity>
-          <Text style={styles.signUpText}>
-            Ainda não possui uma conta? <Text style={styles.signUpLink}>Cadastre-se</Text>
-          </Text>
+          <Pressable onPress={() => router.push('/cadastro')}>
+            <Text style={styles.signUpText}>
+              Ainda não possui uma conta? <Text style={styles.signUpLink}>Cadastre-se</Text>
+            </Text>
+          </Pressable>
         </TouchableOpacity>
       </View>
-
-
-      <View>
-
-      </View>
-
-    
     </View>
   );
 }
@@ -86,7 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 25,
     height: 50,
-    marginBottom: 15,
+    marginBottom: 5,
     paddingLeft: 20,
     fontSize: 16,
   },
@@ -109,6 +154,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginBottom: 10,
+    textAlign: 'left',
+    width: '100%',
+    paddingLeft: 20,
   },
   signUpText: {
     color: '#FFFFFF',
