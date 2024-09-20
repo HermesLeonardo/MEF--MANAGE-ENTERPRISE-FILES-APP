@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Pressable } from '
 import { useForm, Controller } from 'react-hook-form';
 import { router } from 'expo-router';
 
-// Tipos dos campos do formulário
 type FormData = {
   nome: string;
   cnpj: string;
@@ -13,7 +12,6 @@ type FormData = {
 };
 
 export default function SignUpScreen() {
-  // HookForm para controle de formulário e validação
   const { control, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
 
   const onSubmit = (data: FormData) => {
@@ -21,7 +19,6 @@ export default function SignUpScreen() {
     router.push("/");
   };
 
-  // A senha é utilizada para validação da confirmação de senha
   const senha = watch('senha');
 
   return (
@@ -32,7 +29,6 @@ export default function SignUpScreen() {
         <Text style={styles.title}>CADASTRO</Text>
 
         <View style={styles.inputContainer}>
-          {/* Campo Nome */}
           <Controller
             control={control}
             rules={{
@@ -53,13 +49,12 @@ export default function SignUpScreen() {
           />
           {errors.nome && <Text style={styles.errorText}>{errors.nome?.message}</Text>}
 
-          {/* Campo CNPJ */}
           <Controller
             control={control}
             rules={{
               required: 'O CNPJ é obrigatório.',
               pattern: {
-                value: /^\d{14}$/, // Exemplo simples de validação de CNPJ
+                value: /^\d{14}$/,
                 message: 'CNPJ inválido.',
               },
             }}
@@ -78,7 +73,6 @@ export default function SignUpScreen() {
           />
           {errors.cnpj && <Text style={styles.errorText}>{errors.cnpj?.message}</Text>}
 
-          {/* Campo E-mail */}
           <Controller
             control={control}
             rules={{
@@ -103,7 +97,6 @@ export default function SignUpScreen() {
           />
           {errors.email && <Text style={styles.errorText}>{errors.email?.message}</Text>}
 
-          {/* Campo Senha */}
           <Controller
             control={control}
             rules={{
@@ -129,7 +122,6 @@ export default function SignUpScreen() {
           />
           {errors.senha && <Text style={styles.errorText}>{errors.senha?.message}</Text>}
 
-          {/* Campo Confirmar Senha */}
           <Controller
             control={control}
             rules={{
