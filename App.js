@@ -1,5 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import cadastro from './cadastro.tsx';
+import login from './index.tsx'; // Exemplo de outra tela
 
 export default function App() {
   return (
@@ -18,3 +22,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+const Stack = createStackNavigator();
+
+export default function AppNavigator() {
+  return (
+    <Stack.Navigator initialRouteName="SignUp">
+      <Stack.Screen name="SignUp" component={cadastro} />
+      <Stack.Screen name="Login" component={login} />
+      <Stack.Screen name="index" component={SomeOtherScreen} /> {/* Adicione essa linha */}
+    </Stack.Navigator>
+  );
+}
