@@ -4,19 +4,26 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react
 const data = [
   {
     id: '1',
-    empresa: 'Empresa A',
+    empresa: 'Empresa SJRJ',
     pastas: ['Documentos Legais', 'Faturas', 'Contratos'],
   },
   {
     id: '2',
-    empresa: 'Empresa B',
+    empresa: 'Projeto Integrador LTDA',
     pastas: ['Relatórios Financeiros', 'Recibos', 'Folha de Pagamento'],
   },
   {
     id: '3',
-    empresa: 'Empresa C',
+    empresa: 'Notion',
     pastas: ['Planejamento', 'Impostos', 'Propostas'],
   },
+/*
+  {
+    id: '4',
+    empresa: 'Teste',
+    pastas: ['Planejamento', 'Imposto', 'Holerites']
+  }
+*/
 ];
 
 const PrototipoDois = () => {
@@ -36,7 +43,7 @@ const PrototipoDois = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Empresas e Pastas</Text>
+      <Text style={styles.title}>Arquivos</Text>
       <FlatList
         data={data}
         keyExtractor={(item) => item.id}
@@ -48,6 +55,8 @@ const PrototipoDois = () => {
             >
               <Text style={styles.empresaText}>{item.empresa}</Text>
             </TouchableOpacity>
+
+            <View></View>
 
             {selectedEmpresa === item.empresa && (
               <View style={styles.pastaContainer}>

@@ -1,31 +1,52 @@
-import { db } from 'projetointegrador/service/connection'; // Ajuste o caminho conforme necessário
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+// repository/register-repository.tsx
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { db } from "../service/connection";
 
-class UserRepository {
-  private collectionRef = collection(db, 'users');
 
-  async createUser(data: object) {
-    const docRef = await addDoc(this.collectionRef, data);
-    return docRef.id;
+type FormData = {
+  nome: string;
+  cnpj: string;
+  email: string;
+  senha: string;
+  confirmarSenha: string;
+};
+
+class RegisterRepository {
+  collectionRef = collection(db, "Cadastro");
+
+  async create(data: FormData) {
+    try {
+      const docRef = await addDoc(collection(db, 'Cadastro'), {
+        nome: data.nome,
+        cnpj: data.cnpj,
+        email: data.email,
+        senha: data.senha,
+        confirmarSenha: data.confirmarSenha,
+
+      });
+      console.log("Documento adicionado com ID: ", docRef.id);
+    } catch (error) {
+      console.error("Erro ao adicionar documento: ", error);
+    }
   }
 
 
-  async getUser(id: string) {
-    const userDoc = doc(db, 'users', id);
-    const docSnap = await getDocs(userDoc);
-    return docSnap.data();
+  async readAll() {
+    const snapshot = await getDocs(this.collectionRef);
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return data;
   }
 
-
-  async updateUser(id: string, data: object) {
-    const userDoc = doc(db, 'users', id);
-    await updateDoc(userDoc, data);
+  async update(id: string, data: any) {
+    const docRef = doc(db, "Cadastro", id);
+    await updateDoc(docRef, data);
   }
 
-  async deleteUser(id: string) {
-    const userDoc = doc(db, 'users', id);
-    await deleteDoc(userDoc);
+  async delete(id: string) {
+    const docRef = doc(db, "Cadastro", id);
+    await deleteDoc(docRef);
   }
 }
 
-export default new UserRepository();
+
+export const registerRepository = new RegisterRepository();
