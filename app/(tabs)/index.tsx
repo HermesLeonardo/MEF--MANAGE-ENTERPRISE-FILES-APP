@@ -1,27 +1,65 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Pressable } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { router } from 'expo-router';
+import { loginRepository } from '@/repository/login-repository';
 
-type FormData = {
+
+type RegisterFormData = {
   cnpj: string;
   senha: string;
 };
 
 export default function LoginScreen() {
-  const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const { control, handleSubmit, formState: { errors } } = useForm<RegisterFormData>();
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [senhaError, setSenhaError] = useState<string | null>(null);
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
-    router.push('/prototipoDois');
+  const applyCnpjMask = (value: string) => {
+    value = value.replace(/\D/g, '');
+
+    if (value.length <= 14) {
+      value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+      value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+      value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+      value = value.replace(/(\d{4})(\d)/, '$1-$2');
+    }
+
+    return value;
+  };
+
+  const onSubmit = async (data: RegisterFormData) => {
+    try {
+      setLoginError(null);
+      setSenhaError(null); // Resetando os erros ao tentar o login
+
+      const user = await loginRepository.fetchUserByCnpj(data.cnpj);
+
+      if (user) {
+        if (user.senha === data.senha) {
+          console.log("Login bem-sucedido!");
+          router.push('/prototipoDois');
+        } else {
+          setSenhaError("Senha incorreta."); // Definindo o erro de senha incorreta
+          console.log("Senha incorreta.");
+        }
+      } else {
+        setLoginError("CNPJ ou senha incorretos.");
+        console.log("CNPJ ou senha incorretos.");
+      }
+    } catch (error) {
+      console.error("Erro ao buscar os dados do usuário", error);
+      setLoginError("Erro ao tentar fazer login.");
+    }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.backgroundShape} />
-
       <View style={styles.content}>
         <Text style={styles.title}>LOGIN</Text>
+
+        {loginError && <Text style={styles.errorText}>{loginError}</Text>} {/* Mensagem de erro geral */}
 
         <View style={styles.inputContainer}>
           <Controller
@@ -29,7 +67,7 @@ export default function LoginScreen() {
             rules={{
               required: 'O campo CNPJ é obrigatório.',
               pattern: {
-                value: /^\d{14}$/,
+                value: /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/,
                 message: 'CNPJ inválido.',
               },
             }}
@@ -39,8 +77,9 @@ export default function LoginScreen() {
                 style={styles.input}
                 placeholderTextColor="#A0A0A0"
                 onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
+                onChangeText={(text) => onChange(applyCnpjMask(text))} // Aplica a máscara ao alterar o texto
+                value={applyCnpjMask(value)} // Aplica a máscara ao exibir o valor
+                keyboardType="numeric" // Para garantir que o teclado seja numérico
               />
             )}
             name="cnpj"
@@ -64,7 +103,7 @@ export default function LoginScreen() {
                 style={styles.input}
                 placeholderTextColor="#A0A0A0"
                 onBlur={onBlur}
-                onChangeText={onChange}
+                onChangeText={(text) => onChange(text)}
                 value={value}
               />
             )}
@@ -72,10 +111,15 @@ export default function LoginScreen() {
             defaultValue=""
           />
           {errors.senha && <Text style={styles.errorText}>{errors.senha.message}</Text>}
+          {senhaError && <Text style={styles.errorText}>{senhaError}</Text>} {/* Exibe erro de senha incorreta */}
 
           <TouchableOpacity>
-            <Text style={styles.forgotPassword}>Esqueceu sua senha?</Text>
+            <Pressable onPress={() => router.push('./forgotPassword')}>
+              <Text style={styles.forgotPassword}>Esqueceu sua senha?</Text>
+            </Pressable>
           </TouchableOpacity>
+
+
         </View>
 
         <TouchableOpacity style={styles.button}>
@@ -91,6 +135,7 @@ export default function LoginScreen() {
             </Text>
           </Pressable>
         </TouchableOpacity>
+
       </View>
     </View>
   );

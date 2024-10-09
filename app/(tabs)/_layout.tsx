@@ -1,0 +1,1 @@
+/*Escrita para sinalização de potencial uso futuro deste arquivo */

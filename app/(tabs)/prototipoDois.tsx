@@ -17,6 +17,13 @@ const data = [
     empresa: 'Notion',
     pastas: ['Planejamento', 'Impostos', 'Propostas'],
   },
+/*
+  {
+    id: '4',
+    empresa: 'Teste',
+    pastas: ['Planejamento', 'Imposto', 'Holerites']
+  }
+*/
 ];
 
 const PrototipoDois = () => {
@@ -48,6 +55,8 @@ const PrototipoDois = () => {
             >
               <Text style={styles.empresaText}>{item.empresa}</Text>
             </TouchableOpacity>
+
+            <View></View>
 
             {selectedEmpresa === item.empresa && (
               <View style={styles.pastaContainer}>
