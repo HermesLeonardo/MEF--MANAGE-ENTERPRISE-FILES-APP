@@ -1,78 +1,67 @@
+import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, TextInput, Alert } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-const data = [
-  {
-    id: '1',
-    empresa: 'Empresa SJRJ',
-    pastas: ['Documentos Legais', 'Faturas', 'Contratos'],
-  },
-  {
-    id: '2',
-    empresa: 'Projeto Integrador LTDA',
-    pastas: ['Relatórios Financeiros', 'Recibos', 'Folha de Pagamento'],
-  },
-  {
-    id: '3',
-    empresa: 'Notion',
-    pastas: ['Planejamento', 'Impostos', 'Propostas'],
-  },
-/*
-  {
-    id: '4',
-    empresa: 'Teste',
-    pastas: ['Planejamento', 'Imposto', 'Holerites']
-  }
-*/
+const pastasData = [
+  { id: '1', title: 'CONTRATOS SOCIAIS E DOCUMENTOS SOCIETÁRIOS', color: '#4CAF50' },
+  { id: '2', title: 'DOCUMENTOS PESSOAIS', color: '#2196F3' },
+  { id: '3', title: 'ALVARÁS DE LICENÇA DE FUNCIONAMENTO', color: '#FFC107' },
+  { id: '4', title: 'CERTIFICADO DIGITAL', color: '#F44336' },
+  { id: '5', title: 'FOLHA DE PAGAMENTO', color: '#FF9800' },
+  { id: '6', title: 'HONORÁRIOS CONTÁBEIS', color: '#00BCD4' },
+  { id: '7', title: 'CONTRATO DE PRESTAÇÃO DE SERVIÇOS', color: '#9C27B0' },
 ];
 
 const PrototipoDois = () => {
-  const [selectedEmpresa, setSelectedEmpresa] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState(''); 
+  const [filteredPastas, setFilteredPastas] = useState(pastasData); 
 
-  const handleSelectEmpresa = (empresa: string) => {
-    if (selectedEmpresa === empresa) {
-      setSelectedEmpresa(null);
-    } else {
-      setSelectedEmpresa(empresa);
-    }
+  const handleSearch = (text: string) => {
+    setSearchText(text);
+    const filtered = pastasData.filter((pasta) =>
+      pasta.title.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredPastas(filtered);
   };
 
   const handleSelectPasta = (pasta: string) => {
-    Alert.alert('Você selecionou a pasta: ${pasta}');
-  };
+    if (pasta === 'CONTRATOS SOCIAIS E DOCUMENTOS SOCIETÁRIOS') {
+      router.push('/arquivosEmpresa'); 
+    } else {
+      Alert.alert(`Você selecionou a pasta: ${pasta}`);
+    }
+  }; 
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Arquivos</Text>
+      <Text style={styles.title}>Pastas</Text>
+
+      {/* Campo de pesquisa */}
+      <View style={styles.searchContainer}>
+        <Icon name="search" size={20} color="#666" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Pesquisar pasta"
+          value={searchText}
+          onChangeText={handleSearch} 
+        />
+      </View>
+
       <FlatList
-        data={data}
+        data={filteredPastas}
         keyExtractor={(item) => item.id}
+        numColumns={2}
         renderItem={({ item }) => (
-          <View style={styles.empresaContainer}>
-            <TouchableOpacity
-              style={styles.empresaButton}
-              onPress={() => handleSelectEmpresa(item.empresa)}
-            >
-              <Text style={styles.empresaText}>{item.empresa}</Text>
-            </TouchableOpacity>
-
-            <View></View>
-
-            {selectedEmpresa === item.empresa && (
-              <View style={styles.pastaContainer}>
-                {item.pastas.map((pasta, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.pastaButton}
-                    onPress={() => handleSelectPasta(pasta)}
-                  >
-                    <Text style={styles.pastaText}>{pasta}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-          </View>
+          <TouchableOpacity
+            style={[styles.pastaButton, { backgroundColor: item.color }]}
+            onPress={() => handleSelectPasta(item.title)}
+          >
+            <Icon name="folder" size={40} color="#FFF" style={styles.icon} /> {/*Icones pasta*/}
+            <Text style={styles.pastaText}>{item.title}</Text>
+          </TouchableOpacity>
         )}
+        columnWrapperStyle={styles.row}
       />
     </View>
   );
@@ -91,34 +80,43 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
-  empresaContainer: {
-    marginBottom: 15,
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E0E0E0',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 20,
   },
-  empresaButton: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+  searchIcon: {
+    marginRight: 10,
   },
-  empresaText: {
-    fontSize: 18,
-    color: '#FFF',
-    fontWeight: 'bold',
+  searchInput: {
+    flex: 1,
+    height: 40,
+    fontSize: 16,
   },
-  pastaContainer: {
-    marginTop: 10,
-    marginLeft: 20,
+  row: {
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
   pastaButton: {
-    backgroundColor: '#E0E0E0',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    marginTop: 5,
+    flex: 1,
+    margin: 10,
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 120,
+  },
+  icon: {
+    marginBottom: 10,
   },
   pastaText: {
-    fontSize: 16,
-    color: '#333',
+    fontSize: 14,
+    color: '#FFF',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
