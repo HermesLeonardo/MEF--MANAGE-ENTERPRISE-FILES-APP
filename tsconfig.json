@@ -1,20 +1,28 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true,
+    "strict": true, // Habilita todas as opções de verificação estrita
+    "moduleResolution": "node", // Adicione ou verifique se esta opção está presente
+    "baseUrl": ".", // Define um diretório base para resolução de módulos
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["*"] // Permite importar módulos usando a sintaxe "@/module"
     },
     "typeRoots": [
-      "./node_modules/@types"
-    ]
+      "./node_modules/@types" // Define onde o TypeScript deve procurar tipos
+    ],
+    "jsx": "react-native", // Define o JSX apropriado para aplicações React Native
+    "noImplicitAny": false // Permite variáveis não tipadas
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "AppNavigator.tsx"  ]
+    "**/*.ts", // Inclui todos os arquivos TypeScript
+    "**/*.tsx", // Inclui todos os arquivos TypeScript que usam JSX
+    ".expo/types/**/*.ts", // Inclui tipos do Expo
+    "expo-env.d.ts", // Inclui definições de tipos específicas do Expo
+    "AppNavigator.tsx" // Inclui um arquivo específico
+  ],
+  "exclude": [
+    "node_modules", // Exclui a pasta node_modules
+    "**/*.spec.ts", // Exclui arquivos de teste
+    "**/*.test.tsx" // Exclui arquivos de teste que usam JSX
+  ]
 }
