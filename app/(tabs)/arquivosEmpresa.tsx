@@ -10,7 +10,7 @@ const arquivosData = [
 
 const ArquivosScreen = () => {
   const [searchText, setSearchText] = useState(''); 
-  const [filteredArquivos, setFilteredArquivos] = useState(arquivosData); 
+  const [filteredArquivos, setFilteredArquivos] = useState(arquivosData);
 
   const handleSearch = (text: string) => {
     setSearchText(text);
@@ -51,19 +51,23 @@ const ArquivosScreen = () => {
       </View>
 
       {/* Lista de arquivos */}
-      <FlatList
-        data={filteredArquivos}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.fileButton}
-            onPress={() => handleDownload(item.title)}
-          >
-            {renderIcon(item.type)}
-            <Text style={styles.fileText}>{item.title}</Text>
-          </TouchableOpacity>
-        )}
-      />
+      {filteredArquivos.length > 0 ? (
+        <FlatList
+          data={filteredArquivos}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.fileButton}
+              onPress={() => handleDownload(item.title)}
+            >
+              {renderIcon(item.type)}
+              <Text style={styles.fileText}>{item.title}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      ) : (
+        <Text style={styles.noResultsText}>Nenhum arquivo encontrado</Text>
+      )}
     </View>
   );
 };
@@ -108,6 +112,12 @@ const styles = StyleSheet.create({
   fileText: {
     fontSize: 16,
     marginLeft: 10,
+  },
+  noResultsText: {
+    textAlign: 'center',
+    color: '#888',
+    fontSize: 16,
+    marginTop: 20,
   },
 });
 

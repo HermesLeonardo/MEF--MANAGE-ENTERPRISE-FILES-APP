@@ -5,7 +5,6 @@ import { router } from 'expo-router';
 import { registerController } from '@/controller/register-controller';
 import { TextInputMask } from 'react-native-masked-text';
 
-
 export type RegisterFormData = {
   nome: string;
   cnpj: string;
@@ -14,8 +13,9 @@ export type RegisterFormData = {
   confirmarSenha: string;
 };
 
-export default function SignUpScreen() {
+export function SignUpScreen() {
   const { control, handleSubmit, watch, formState: { errors } } = useForm<RegisterFormData>();
+  const senha = watch('senha');
 
   const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
     try {
@@ -27,146 +27,142 @@ export default function SignUpScreen() {
     }
   };
 
-  const senha = watch('senha');
-
   return (
     <View style={styles.container}>
       <View style={styles.backgroundShape} />
+      <Text style={styles.title}>CADASTRO</Text>
 
-      <View style={styles.content}>
-        <Text style={styles.title}>CADASTRO</Text>
+      <View style={styles.inputContainer}>
+        {/* Nome */}
+        <Controller
+          control={control}
+          rules={{ required: 'O nome é obrigatório.' }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Nome"
+              style={styles.input}
+              placeholderTextColor="#A0A0A0"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
+          name="nome"
+          defaultValue=""
+        />
+        {errors.nome && <Text style={styles.errorText}>{errors.nome.message}</Text>}
 
-        <View style={styles.inputContainer}>
-          {/* Nome */}
-          <Controller
-            control={control}
-            rules={{ required: 'O nome é obrigatório.' }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                placeholder="Nome"
-                style={styles.input}
-                placeholderTextColor="#A0A0A0"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-            name="nome"
-            defaultValue=""
-          />
-          {errors.nome && <Text style={styles.errorText}>{errors.nome.message}</Text>}
+        {/* CNPJ */}
+        <Controller
+          control={control}
+          rules={{
+            required: 'O CNPJ é obrigatório.',
+            pattern: {
+              value: /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/,
+              message: 'CNPJ inválido.',
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInputMask
+              type="cnpj"
+              placeholder="CNPJ"
+              style={styles.input}
+              placeholderTextColor="#A0A0A0"
+              onBlur={onBlur}
+              value={value}
+              onChangeText={onChange}
+              maxLength={18} // Limite de caracteres
+            />
+          )}
+          name="cnpj"
+          defaultValue=""
+        />
+        {errors.cnpj && <Text style={styles.errorText}>{errors.cnpj.message}</Text>}
 
-          {/* CNPJ */}
-          <Controller
-            control={control}
-            rules={{
-              required: 'O CNPJ é obrigatório.',
-              pattern: {
-                value: /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/,
-                message: 'CNPJ inválido.',
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInputMask
-                type={'cnpj'}
-                placeholder="CNPJ"
-                style={styles.input}
-                placeholderTextColor="#A0A0A0"
-                onBlur={onBlur}
-                value={value}
-                onChangeText={onChange} // A máscara vai ser aplicada automaticamente
-              />
-            )}
-            name="cnpj"
-            defaultValue=""
-          />
-          {errors.cnpj && <Text style={styles.errorText}>{errors.cnpj.message}</Text>}
+        {/* E-mail */}
+        <Controller
+          control={control}
+          rules={{
+            required: 'O e-mail é obrigatório.',
+            pattern: {
+              value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+              message: 'E-mail inválido.',
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="E-mail"
+              style={styles.input}
+              placeholderTextColor="#A0A0A0"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
+          name="email"
+          defaultValue=""
+        />
+        {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
 
-          {/* E-mail */}
-          <Controller
-            control={control}
-            rules={{
-              required: 'O e-mail é obrigatório.',
-              pattern: {
-                value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-                message: 'E-mail inválido.',
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                placeholder="E-mail"
-                style={styles.input}
-                placeholderTextColor="#A0A0A0"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-            name="email"
-            defaultValue=""
-          />
-          {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
+        {/* Senha */}
+        <Controller
+          control={control}
+          rules={{
+            required: 'A senha é obrigatória.',
+            minLength: {
+              value: 6,
+              message: 'A senha deve ter pelo menos 6 caracteres.',
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Senha"
+              secureTextEntry
+              style={styles.input}
+              placeholderTextColor="#A0A0A0"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
+          name="senha"
+          defaultValue=""
+        />
+        {errors.senha && <Text style={styles.errorText}>{errors.senha.message}</Text>}
 
-          {/* Senha */}
-          <Controller
-            control={control}
-            rules={{
-              required: 'A senha é obrigatória.',
-              minLength: {
-                value: 6,
-                message: 'A senha deve ter pelo menos 6 caracteres.',
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                placeholder="Senha"
-                secureTextEntry
-                style={styles.input}
-                placeholderTextColor="#A0A0A0"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-            name="senha"
-            defaultValue=""
-          />
-          {errors.senha && <Text style={styles.errorText}>{errors.senha.message}</Text>}
-
-          {/* Confirmar Senha */}
-          <Controller
-            control={control}
-            rules={{
-              required: 'É necessário confirmar a senha.',
-              validate: value => value === senha || 'As senhas não coincidem.',
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                placeholder="Confirmar Senha"
-                secureTextEntry
-                style={styles.input}
-                placeholderTextColor="#A0A0A0"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-            name="confirmarSenha"
-            defaultValue=""
-          />
-          {errors.confirmarSenha && <Text style={styles.errorText}>{errors.confirmarSenha.message}</Text>}
-        </View>
-
-        <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
-          <Text style={styles.buttonText}>CADASTRAR</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => router.push("/")}>
-          <Text style={styles.signUpText}>
-            Já possui uma conta? <Text style={styles.signUpLink}>Faça login</Text>
-          </Text>
-        </TouchableOpacity>
+        {/* Confirmar Senha */}
+        <Controller
+          control={control}
+          rules={{
+            required: 'É necessário confirmar a senha.',
+            validate: value => value === senha || 'As senhas não coincidem.',
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Confirmar Senha"
+              secureTextEntry
+              style={styles.input}
+              placeholderTextColor="#A0A0A0"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
+          name="confirmarSenha"
+          defaultValue=""
+        />
+        {errors.confirmarSenha && <Text style={styles.errorText}>{errors.confirmarSenha.message}</Text>}
       </View>
+
+      <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)} activeOpacity={0.85}>
+        <Text style={styles.buttonText}>CADASTRAR</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push("/")}>
+        <Text style={styles.signUpText}>
+          Já possui uma conta? <Text style={styles.signUpLink}>Faça login</Text>
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -183,20 +179,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: '100%',
-    height: '40%',
-    backgroundColor: '#FFFFFF',
+    height: '45%',
+    backgroundColor: '#3B83C3',
     borderBottomLeftRadius: 100,
     borderBottomRightRadius: 100,
-  },
-  content: {
-    width: '100%',
-    alignItems: 'center',
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#FFFFFF',
     marginBottom: 40,
+    textAlign: 'center',
   },
   inputContainer: {
     width: '100%',
@@ -206,14 +199,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 25,
     height: 50,
-    marginBottom: 10,
+    marginBottom: 15,
     paddingLeft: 20,
     fontSize: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3, // para Android
   },
   errorText: {
     color: 'red',
+    fontSize: 14,
     marginBottom: 10,
-    marginLeft: 20,
+    paddingLeft: 20,
   },
   button: {
     backgroundColor: '#1877F2',
@@ -222,7 +221,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    marginBottom: 20,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
   },
   buttonText: {
     color: '#FFFFFF',
@@ -232,9 +236,13 @@ const styles = StyleSheet.create({
   signUpText: {
     color: '#FFFFFF',
     textAlign: 'center',
+    fontSize: 16,
+    marginTop: 20,
   },
   signUpLink: {
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
 });
+
+export default SignUpScreen;

@@ -7,10 +7,12 @@ import login from './index.tsx'; // Exemplo de outra tela
 
 export default function App() {
   return (
+    <UserProvider>
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
       <StatusBar style="auto" />
     </View>
+    </UserProvider>
   );
 }
 
